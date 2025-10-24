@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Кафе Алмаз — меню и доставка</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f1e8;
+  --card:#fffaf5;
+  --accent:#8b5e3c;
+  --accent-light:#c9a77b;
+  --text:#2b2318;
+  --muted:#7a6a55;
+  --shadow:rgba(18,12,8,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Inter",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  padding:16px;
+  scroll-behavior:smooth;
+}
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logo{
+  width:60px;height:60px;
+  border-radius:50%;
+  background:url('https://i.ibb.co.com/PqqVYdK/almaz.jpg') center/cover no-repeat;
+  box-shadow:0 6px 18px var(--shadow);
+}
+h1{font-size:20px;}
+.brand p{font-size:13px;color:var(--muted)}
+.btn{
+  background:var(--accent);
+  color:white;
+  border:0;
+  border-radius:10px;
+  padding:10px 16px;
+  font-weight:700;
+  cursor:pointer;
+  font-size:14px;
+  transition:.15s;
+}
+.btn:active{transform:scale(0.97);}
+.btn.ghost{
+  background:transparent;
+  border:1px solid rgba(43,35,26,0.1);
+  color:var(--accent);
+}
+
+/* --- ТАБЫ --- */
+.tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:20px;
+  justify-content:center;
+}
+.tab{
+  padding:10px 16px;
+  border-radius:10px;
+  background:var(--card);
+  border:1px solid rgba(43,35,26,0.1);
+  cursor:pointer;
+  font-weight:600;
+  font-size:15px;
+  box-shadow:0 2px 6px var(--shadow);
+  transition:.2s;
+  text-align:center;
+}
+.tab:active{transform:scale(0.95);}
+.tab.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent-light);
+}
+@media(max-width:600px){
+  .tabs{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+  }
+  .tab{
+    text-align:center;
+    font-size:13px;
+    padding:10px 6px;
+    border-radius:12px;
+  }
+}
+
+/* --- БЛЮДА --- */
+.menu{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:16px;
+  margin-bottom:60px;
+}
+.dish{
+  background:var(--card);
+  border-radius:12px;
+  padding:12px;
+  box-shadow:0 4px 14px var(--shadow);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  transition:.2s ease;
+  position:relative;
+}
+.dish:hover{transform:translateY(-3px);}
+.dish h3{font-size:16px;margin-bottom:4px;}
+.dish p{font-size:13px;color:var(--muted);margin-bottom:6px;}
+.price{color:var(--accent-light);font-weight:800;font-size:15px;margin-bottom:8px;}
+.add-btn{width:100%;}
+
+/* --- FLOAT CART --- */
+#floatCart{
+  position:fixed;
+  bottom:22px;
+  right:22px;
+  background:var(--accent);
+  color:white;
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 8px 25px rgba(0,0,0,0.25);
+  cursor:pointer;
+  font-weight:800;
+  font-size:26px;
+  z-index:999;
+  transition:transform .2s ease;
+}
+#floatCart:hover{transform:scale(1.08);}
+#floatCart span{
+  position:absolute;
+  top:10px;
+  right:12px;
+  background:#fff;
+  color:var(--accent);
+  border-radius:50%;
+  width:25px;
+  height:25px;
+  font-size:14px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* --- CART MODAL --- */
+#cartModal{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.4);
+  display:none;align-items:center;justify-content:center;
+  z-index:1000;
+}
+.cart-box{
+  background:var(--card);
+  border-radius:16px;
+  padding:18px;
+  width:90%;
+  max-width:420px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.1);
+  max-height:90%;
+  overflow:auto;
+}
+.cart-box h3{margin-bottom:10px;text-align:center;}
+.cart-item{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;
+}
+.qty{display:flex;align-items:center;gap:6px;}
+.qty button{border:1px solid rgba(43,35,26,0.1);background:transparent;border-radius:6px;padding:4px 10px;cursor:pointer;}
+.total{
+  display:flex;justify-content:space-between;margin-top:8px;
+  font-weight:800;border-top:1px dashed rgba(43,35,26,0.1);
+  padding-top:8px;
+}
+form{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
+input,textarea{
+  border:1px solid rgba(43,35,26,0.1);
+  border-radius:10px;
+  padding:10px;
+  font-size:14px;
+  background:transparent;
+}
+textarea{min-height:60px;resize:vertical;}
+footer{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;}
+
+/* --- УВЕДОМЛЕНИЕ --- */
+#addedNotify{
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--accent);
+  color:white;
+  padding:10px 22px;
+  border-radius:12px;
+  font-weight:600;
+  opacity:0;
+  transition:opacity .3s ease;
+  z-index:2000;
+}
+#addedNotify.show{opacity:1;}
+</style>
+
+
+
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo"></div>
+    <div>
+      <h1>Кафе "Алмаз"</h1>
+      <p>Вкусно. Быстро. Уютно.</p>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" id="tabs"></div>
+<main>
+  <div id="menu" class="menu"></div>
+</main>
+
+<footer>© Кафе Алмаз | Разработка — Амир</footer>
+
+<div id="floatCart" onclick="openCart()">
+  🛒
+  <span id="cartCount">0</span>
+</div>
+
+<div id="cartModal">
+  <div class="cart-box">
+    <h3>Ваш заказ</h3>
+    <div id="cartList"></div>
+    <div class="total">
+      <div>Итого:</div>
+      <div id="cartTotal">0 ₸</div>
+    </div>
+    <form id="orderForm" onsubmit="return false;">
+      <input id="name" placeholder="Имя" required>
+      <input id="phone" placeholder="+7 7xx xxx xxxx" required>
+      <textarea id="addr" placeholder="Адрес / Премичание "></textarea>
+      <button id="send" class="btn">Отправить в WhatsApp</button>
+      <button id="clear" class="btn ghost" type="button">Очистить</button>
+    </form>
+    <button id="closeCart" class="btn ghost" style="margin-top:10px;width:100%">Закрыть</button>
+  </div>
+</div>
+
+<script>
+const PHONE_NUMBER = "+77001500900";
+
+const categories = {
+"🥗 САЛАТЫ":[
+{name:"Хрустящая курочка в кисло-сладком соусе", price:2400, desc:"куриное филе, брокколи, баклажаны, чеснок, кунжут"},
+{name:"Баян-Аул", price:2300, desc:"копчёная курица, язык говяжий, огурцы, грибы, майонез"},
+{name:"Император", price:2300, desc:"говядина, ветчина, яйцо, сыр, чипсы, майонез"},
+{name:"Салат с охотничьими колбасками и жареным картофелем", price:3000, desc:"охот. колбаски, картофель, помидоры, лист салата, красный лук, зелень, специи, оливковое масло, чили перец"},
+{name:"Мальдини", price:2400, desc:"говядина, помидор, сыр пармезан, баклажан, сливочный соус"},
+{name:"Цезарь с сёмгой", price:2900},
+{name:"Тёплый с говядиной", price:2700},
+{name:"Сёмга с овощами на гриле", price:3000},
+{name:"Цезарь с креветками", price:3200},
+{name:"Хрустящие баклажаны", price:2600},
+{name:"Судочек", price:2500},
+{name:"Тёплый с курицей", price:2300},
+{name:"Оливье", price:1900},
+{name:"Малибу", price:2300}
+],
+"🍜 ПЕРВЫЕ БЛЮДА":[
+{name:"Лапша по-домашнему", price:1300},
+{name:"Кукси", price:1600},
+{name:"Окрошка", price:1700},
+{name:"Пельмени", price:1600},
+{name:"Солянка", price:1700},
+{name:"Уха из сёмги", price:1700},
+{name:"Шорпа из баранины", price:1900},
+{name:"Лагман уйгурский", price:2000},
+{name:"Грибной крем-суп", price:2000}
+],
+"🍗 БЛЮДА ИЗ КУРИЦЫ":[
+{name:"Фрикасе", price:2400},
+{name:"Стейк из курицы в сливочном соусе", price:3000},
+{name:"Курица в соусе по-китайски", price:2700},
+{name:"Жаровня из курицы", price:2600},
+{name:"Отбивная из курицы", price:2700},
+{name:"Курица с сыром и грецким орехом", price:2800}
+],
+"🍹 БАР":[
+  {name:"Домашний лимонад", price:1800},
+  {name:"Сок «Gracio»", price:1500},
+  {name:"Сок «Da-Da»", price:1500},
+  {name:"Морс", price:1300},
+  {name:"Coca-Cola / Pepsi", price:1100},
+  {name:"Sprite", price:1100},
+  {name:"Mirinda", price:1100},
+  {name:"Компот", price:1000},
+  {name:"Вода «Tassay»", price:600},
+  {name:"Вода «Asu»", price:600},
+  {name:"Мохито", price:1200},
+  {name:"Цитрусовый", price:1200}
+],
+
+"🥩 БЛЮДА ИЗ ГОВЯДИНЫ":[
+{name:"Манты (жареные / на пару)", price:2300},
+{name:"Лагман жареный", price:2200},
+{name:"Плов", price:2600},
+{name:"Мясо по-тайски", price:2700},
+{name:"Жаровня из говядины", price:2900},
+{name:"Говядина в азиатском стиле с рисом", price:3600},
+{name:"Говядина запечённая в тесте", price:5000},
+{name:"Говяжьи рёбра с овощами", price:3300},
+{name:"Медальоны в сливочно-грибном соусе", price:4300},
+{name:"Блюдо от шефа", price:4800},
+{name:"Казан-кебаб из говядины", price:3100},
+{name:"Говядина запечённая в горшочке", price:3400},
+{name:"Говядина «Рок-Фор»", price:3800},
+{name:"Говядина под сыром", price:3200},
+{name:"Бефстроганов", price:2900}
+],
+"🍖 БЛЮДА ИЗ БАРАНИНЫ":[
+{name:"Куырдак", price:3100},
+{name:"Баранина на жаровне с овощами", price:3100},
+{name:"Казан-кебаб", price:3500}
+],
+"🐟 БЛЮДА ИЗ РЫБЫ":[
+{name:"Жаровня из судака", price:2800},
+{name:"Судак с овощами гриль", price:3000},
+{name:"Судак в сливочном соусе", price:3100},
+{name:"Жаровня с сёмгой", price:4200},
+{name:"Стейк из сёмги в сливочно-грибном соусе", price:4600},
+{name:"Стейк из сёмги с овощами гриль", price:5100}
+],
+"🍝 ПАСТА И ГАРНИРЫ":[
+{name:"Паста с овощами", price:2200},
+{name:"Паста с курицей", price:2600},
+{name:"Паста с сёмгой", price:3300},
+{name:"Картофельное пюре", price:700},
+{name:"Рис", price:750},
+{name:"Рис с овощами", price:850},
+{name:"Фри", price:950},
+{name:"Картофельные дольки", price:1000},
+{name:"Овощи на гриле", price:1300}
+],
+"🍕 ПИЦЦА":[
+{name:"Маргарита", price:2400},
+{name:"Салями", price:2500},
+{name:"Пепперони", price:2600},
+{name:"Детский каприз", price:3000},
+{name:"Грибная", price:2800},
+{name:"Цыплёнок Барбекю", price:2700},
+{name:"Сырная", price:2700},
+{name:"Болоньезе", price:2900},
+{name:"С охотничьими колбасками", price:2800},
+{name:"4 Сезона", price:3000},
+{name:"Фрикасе", price:3100},
+{name:"Цезарь", price:3200},
+{name:"Фирменная «Алмаз»", price:3600},
+{name:"Пицца с сёмгой", price:5100}
+],
+"🍱 СЕТЫ":[
+{name:"Сет 1 — 24 шт", price:6600, desc:"Филадельфия, Сэки Темпура, ролл с огурцом, Калифорния"},
+{name:"Сет 2 — 32 шт", price:10600, desc:"Запечённый с крабом, Эби Темпура, Филадельфия, Калифорния"},
+{name:"Сет 3 — 40 шт", price:12600, desc:"Филадельфия, Дакота, запечённый с креветкой, Гурме, ролл с лососем"},
+{name:"Сет 4 — 48 шт", price:16300, desc:"Запечённый с лососем, запечённый с креветкой, Эби Темпура, Сэки Темпура, Калифорния, Филадельфия"}
+]
+
+};
+
+let currentCategory = Object.keys(categories)[0];
+let cart = [];
+
+const el = s => document.querySelector(s);
+const fmt = v => v.toLocaleString('ru-RU') + " ₸";
+
+function renderTabs(){
+  const tabs = el("#tabs");
+  tabs.innerHTML = "";
+  Object.keys(categories).forEach(cat=>{
+    const div = document.createElement("div");
+    div.className = "tab" + (cat===currentCategory ? " active" : "");
+    div.textContent = cat;
+    div.onclick = ()=>{currentCategory=cat;renderTabs();renderMenu();};
+    tabs.appendChild(div);
+  });
+}
+
+function renderMenu(){
+  const menu = el("#menu");
+  menu.innerHTML = "";
+  categories[currentCategory].forEach((p,i)=>{
+    menu.innerHTML += `
+      <div class="dish">
+        <h3>${p.name}</h3>
+        ${p.desc?`<p>${p.desc}</p>`:""}
+        <div class="price">${fmt(p.price)}</div>
+        <button class="btn add-btn" onclick="addToCart('${currentCategory}_${i}')">Добавить</button>
+      </div>`;
+  });
+}
+
+function addToCart(id){
+  const [cat,i] = id.split("_");
+  const p = categories[cat][i];
+  const ex = cart.find(x=>x.name===p.name);
+  if(ex) ex.q++;
+  else cart.push({...p,q:1});
+  updateCart();
+}
+
+function changeQty(name,d){
+  const it = cart.find(x=>x.name===name);
+  if(!it)return;
+  it.q+=d;
+  if(it.q<1)cart=cart.filter(x=>x.name!==name);
+  updateCart();
+}
+
+function updateCart(){
+  el("#cartCount").textContent = cart.reduce((s,x)=>s+x.q,0);
+  const l = el("#cartList");
+  if(cart.length===0){l.innerHTML="<p style='color:var(--muted);text-align:center'>Корзина пуста</p>";}
+  else{
+    l.innerHTML = cart.map(it=>`
+      <div class="cart-item">
+        <div>${it.name}<br><small>${fmt(it.price)}</small></div>
+        <div class="qty">
+          <button onclick="changeQty('${it.name}',-1)">-</button>
+          <div>${it.q}</div>
+          <button onclick="changeQty('${it.name}',1)">+</button>
+        </div>
+      </div>`).join('');
+  }
+  el("#cartTotal").textContent = fmt(cart.reduce((s,x)=>s+x.price*x.q,0));
+}
+
+function openCart(){el("#cartModal").style.display="flex";}
+el("#closeCart").onclick=()=>el("#cartModal").style.display="none";
+el("#clear").onclick=()=>{cart=[];updateCart();};
+el("#send").onclick=()=>{
+  if(cart.length===0){alert("Корзина пуста");return;}
+  const name=el("#name").value.trim();
+  const phone=el("#phone").value.trim();
+  if(!name||!phone){alert("Введите имя и телефон");return;}
+  const addr=el("#addr").value.trim();
+  let msg=`Новый заказ в Кафе Алмаз:\n\nИмя: ${name}\nТелефон: ${phone}\n${addr?("Адрес: "+addr+"\n"):""}\n\nЗаказ:\n`;
+  cart.forEach((it,i)=>msg+=`${i+1}. ${it.name} x${it.q} = ${it.price*it.q} ₸\n`);
+  msg+=`\nИтого: ${cart.reduce((s,x)=>s+x.price*x.q,0)} ₸`;
+  window.open(`https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
+};
+
+renderTabs();
+renderMenu();
+updateCart();
+function showAddedAnimation(btn){
+  btn.classList.add('added-to-cart');
+  btn.textContent = "Добавлено ✓";
+  setTimeout(()=>{
+    btn.classList.remove('added-to-cart');
+    btn.textContent = "Добавить";
+  }, 800);
+}
+
+// Модификация функции addToCart:
+function addToCart(id){
+  const [cat,i] = id.split("_");
+  const p = categories[cat][i];
+  const ex = cart.find(x=>x.name===p.name);
+  if(ex) ex.q++;
+  else cart.push({...p,q:1});
+  updateCart();
+
+  // Показываем анимацию и обновление корзины
+  const btn = event.target;
+  showAddedAnimation(btn);
+
+  // Лёгкое масштабирование и вспышка на иконке корзины
+  const cartBtn = el("#floatCart");
+  cartBtn.style.transform = "scale(1.2)";
+  setTimeout(()=>cartBtn.style.transform="scale(1)",200);
+}
+
+</script>
+</body>
+</html>
