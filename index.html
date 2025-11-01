@@ -218,6 +218,7 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;}
   z-index:2000;
 }
 #addedNotify.show{opacity:1;}
+
 </style>
 
 
@@ -234,6 +235,28 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;}
     </div>
   </div>
 </header>
+
+<!-- Поисковая строка -->
+<div style="text-align:center; margin-bottom:18px;">
+  <input 
+    id="searchInput" 
+    type="text" 
+    placeholder="🔍 Поиск по меню..." 
+    style="
+      width:90%;
+      max-width:400px;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(43,35,26,0.2);
+      background:var(--card);
+      font-size:15px;
+      outline:none;
+      box-shadow:0 2px 6px var(--shadow);
+    "
+    oninput="searchMenu()"
+  >
+</div>
+
 
 <div class="tabs" id="tabs"></div>
 <main>
@@ -270,6 +293,21 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;}
 const PHONE_NUMBER = "+77011500900";
 
 const categories = {
+"🔥 ШАШЛЫКИ": [
+  {name:"Овощной 350г", price:3000},
+  {name:"Люля-кебаб 350г", price:2900},
+  {name:"Окорочка 350г", price:2500},
+  {name:"Люля Алмаз 350г", price:3300},
+  {name:"Свинина классическая 350г", price:2900},
+  {name:"Баранина 350г", price:2800},
+  {name:"Филе утки 350г", price:3200},
+  {name:"Баранина рёбрышки 350г", price:4000},
+  {name:"Говядина 350г", price:3200},
+  {name:"Индейка 350г", price:3200},
+  {name:"Шашлык ассорти", price:4300},
+  {name:"Шашлык ассорти халал", price:2600}
+],
+
 "🥗 САЛАТЫ":[
 {name:"Хрустящая курочка в кисло-сладком соусе", price:2400, desc:"куриное филе, брокколи, баклажаны, чеснок, кунжут"},
 {name:"Баян-Аул", price:2300, desc:"копчёная курица, язык говяжий, огурцы, грибы, майонез"},
@@ -505,8 +543,48 @@ function addToCart(id){
   setTimeout(()=>cartBtn.style.transform="scale(1)",200);
 }
 
+function searchMenu() {
+  const query = el("#searchInput").value.toLowerCase().trim();
+  const menu = el("#menu");
+  menu.innerHTML = "";
+
+  if (query === "") {
+    renderMenu();
+    return;
+  }
+
+  // Собираем все блюда
+  let results = [];
+  Object.keys(categories).forEach(cat => {
+    categories[cat].forEach((p, i) => {
+      if (
+        p.name.toLowerCase().includes(query) ||
+        (p.desc && p.desc.toLowerCase().includes(query))
+      ) {
+        results.push({ ...p, cat, i });
+      }
+    });
+  });
+
+  if (results.length === 0) {
+    menu.innerHTML = `<p style="text-align:center;color:var(--muted)">Ничего не найдено</p>`;
+  } else {
+    results.forEach(r => {
+      menu.innerHTML += `
+        <div class="dish">
+          <h3>${r.name}</h3>
+          ${r.desc ? `<p>${r.desc}</p>` : ""}
+          <div class="price">${fmt(r.price)}</div>
+          <button class="btn add-btn" onclick="addToCart('${r.cat}_${r.i}')">Добавить</button>
+        </div>`;
+    });
+  }
+}
+
+
 </script>
 </body>
 </html>
+
 
 
