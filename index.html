@@ -282,9 +282,33 @@ footer{text-align:center;color:var(--muted);font-size:13px;margin-top:30px;}
       <input id="name" placeholder="Имя" required>
       <input id="phone" placeholder="+7 7xx xxx xxxx" required>
       <textarea id="addr" placeholder="Адрес / Премичание "></textarea>
+      <label style="font-weight:600; margin-top:6px;">Способ оплаты:</label>
+
+<div style="display:flex; gap:12px; margin-top:4px; margin-bottom:8px;">
+  <label style="display:flex; align-items:center; gap:6px;">
+    <input type="radio" name="pay" value="Наличные" checked>
+    Наличные
+  </label>
+
+  <label style="display:flex; align-items:center; gap:6px;">
+    <input type="radio" name="pay" value="Безнал (Kaspi / перевод)">
+    Безнал
+  </label>
+</div>
+
       <button id="send" class="btn">Отправить в WhatsApp</button>
       <button id="clear" class="btn ghost" type="button">Очистить</button>
     </form>
+    <p style="
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+  margin-top:12px;
+  line-height:1.4;
+">
+  ⚠️ Взимается дополнительная плата за каждый контейнер к блюду.
+</p>
+
     <button id="closeCart" class="btn ghost" style="margin-top:10px;width:100%">Закрыть</button>
   </div>
 </div>
@@ -506,7 +530,16 @@ el("#send").onclick=()=>{
   const phone=el("#phone").value.trim();
   if(!name||!phone){alert("Введите имя и телефон");return;}
   const addr=el("#addr").value.trim();
-  let msg=`Новый заказ в Кафе Алмаз:\n\nИмя: ${name}\nТелефон: ${phone}\n${addr?("Адрес: "+addr+"\n"):""}\n\nЗаказ:\n`;
+ const pay = document.querySelector('input[name="pay"]:checked').value;
+
+let msg =
+  `Новый заказ в Кафе Алмаз:\n\n` +
+  `Имя: ${name}\n` +
+  `Телефон: ${phone}\n` +
+  (addr ? `Адрес/Примечание: ${addr}\n` : "") +
+  `Способ оплаты: ${pay}\n\n` +
+  `Заказ:\n`;
+
   cart.forEach((it,i)=>msg+=`${i+1}. ${it.name} x${it.q} = ${it.price*it.q} ₸\n`);
   msg+=`\nИтого: ${cart.reduce((s,x)=>s+x.price*x.q,0)} ₸`;
   window.open(`https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
