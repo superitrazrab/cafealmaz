@@ -327,6 +327,16 @@ header{
       <textarea id="addr" placeholder="Адрес / Премичание "></textarea>
       <label style="font-weight:600; margin-top:6px;">Способ оплаты:</label>
 
+<label style="font-weight:600; margin-top:6px;">
+  Контейнеры (150 ₸ / шт):
+</label>
+
+<div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+  <button type="button" class="btn ghost" onclick="changeContainer(-1)">−</button>
+  <div id="containerQty" style="font-weight:700;">0</div>
+  <button type="button" class="btn ghost" onclick="changeContainer(1)">+</button>
+</div>
+
 <div style="display:flex; gap:12px; margin-top:4px; margin-bottom:8px;">
   <label style="display:flex; align-items:center; gap:6px;">
     <input type="radio" name="pay" value="Наличные" checked>
@@ -360,6 +370,7 @@ header{
 const PHONE_NUMBER = "+77011500900";
 
 const categories = {
+
 "🔥 ШАШЛЫКИ": [
   {name:"Овощной 350г", price:3000},
   {name:"Люля-кебаб 350г", price:2900},
@@ -372,20 +383,20 @@ const categories = {
   {name:"Говядина 350г", price:4300},
   {name:"Индейка 350г", price:2600},
   {name:"Шашлык ассорти", price:33000},
-  {name:"Шашлык ассорти халал", price:35000}
+  {name:"Шашлык ассорти халал", price:35000, desc:"Без свинины!"}
 ],
 
 "🥗 САЛАТЫ":[
   {name:"Свежий", price:1800, desc:"микс салата, помидор, огурец, перец, красный лук"},
   {name:"ХЕ (рыбное)", price:1900},
-  {name:"Язык (мясной)", price:1900},
+  {name:"Хе (мясной)", price:1900},
   {name:"Ачичук", price:1800, desc:"помидор, огурец, лук, масло, острая заправка"},
-  {name:"Итальянночка", price:2000, desc:"микс салата, помидоры, грибы, курочка, масло, лимон, сыр"},
-  {name:"Цезарь с курицей", price:2400, desc:"микс салата, куриная грудка, сыр пармезан, соус цезарь"},
+  {name:"Итальяночка", price:2000, desc:"микс салата, помидоры, грибы, курочка, масло, лимон, сыр"},
+  {name:"Цезарь с курицей", price:2400, desc:"микс салата, помидор, яйцо (куриное), куриная грудка, сыр пармезан, соус цезарь"},
   {name:"Греческий", price:2200, desc:"фетакса, помидоры, огурцы, болгарский перец, маслины, лук, масло"},
   {name:"Язык по-восточному", price:2300, desc:"язык, огурцы, помидоры, перец, чеснок, лук, масло, кунжут, соевый соус"},
   {name:"Алмаз", price:2300, desc:"копченая курица, говядина, яйцо, сыр, пай, майонез"},
-  {name:"Шахтерский микс", price:2000, desc:"говядина, микс салата, сыр, соленый огурец, лук, соевый соус"},
+  {name:"Шахтерский", price:2000, desc:"говядина, микс салата, сыр, соленый огурец, лук, соевый соус"},
   {name:"Говядина в тайском стиле", price:2400, desc:"говядина, перец, лук, огурец, соевый соус, кунжут, острая заправка"},
   {name:"Салатный микс с сёмгой", price:2800, desc:"микс салата, семга, помидоры, красный лук, маслины, лимон, масло"},
   {name:"Хрустящая курочка в кисло-сладком соусе", price:2500, desc:"куриное филе, брокколи, баклажаны, чеснок, кунжут"},
@@ -396,11 +407,10 @@ const categories = {
   {name:"Тёплый салат с говядиной", price:2700, desc:"лист салата, болгарский перец, говядина, красный лук, баклажаны, лимон"},
   {name:"Цезарь с креветками", price:3200, desc:"крутоны, сыр пармезан, яйцо, креветки, салат, соус цезарь"},
   {name:"Хрустящие баклажаны", price:2600, desc:"баклажаны, болгарский перец, репчатый лук, соус терияки"},
-  {name:"Судочек", price:2500, desc:"судак, помидор, болгарский перец, красный лук, чеснок, микс-салат, сыр"},
-  {name:"Тёплый салат с курицей", price:2300, desc:"курица, шампиньоны, оливки, микс-салат, помидоры, сыр"},
+  {name:"Судачок", price:2500, desc:"судак, помидор, болгарский перец, красный лук, чеснок, микс-салат, сыр"},
+  {name:"Тёплый салат с курицей", price:2300, desc:"курица, шампиньоны, микс-салат, помидоры, сыр"},
   {name:"Тёплый с баклажанами", price:2200},
   {name:"Малибу", price:2500, desc:"помидоры, огурцы, сыр, майонез, красный лук, лист салата"},
-  {name:"Запечённая свёкла с хрустящим сыром фетакса", price:2500, desc:"свёкла, фетакса, черри, микс салата, фирменный соус"}
 ],
 "🍜 ПЕРВЫЕ БЛЮДА":[
 {name:"Лапша по-домашнему", price:1300},
@@ -425,7 +435,8 @@ const categories = {
 ],
 
 "🥩 БЛЮДА ИЗ ГОВЯДИНЫ":[
-{name:"Манты (жареные / на пару)", price:2300},
+{name:"Манты (жареные)", price:2300},
+{name:"Манты (на пару)", price:2300},
 {name:"Лагман жареный", price:2200},
 {name:"Плов", price:2200},
 {name:"Мясо по-тайски", price:2700},
@@ -533,6 +544,10 @@ const categories = {
 let currentCategory = Object.keys(categories)[0];
 let cart = [];
 
+let containerQty = 0;
+const CONTAINER_PRICE = 150;
+
+
 const el = s => document.querySelector(s);
 const fmt = v => v.toLocaleString('ru-RU') + " ₸";
 
@@ -594,12 +609,20 @@ function updateCart(){
         </div>
       </div>`).join('');
   }
-  el("#cartTotal").textContent = fmt(cart.reduce((s,x)=>s+x.price*x.q,0));
+  const foodTotal = cart.reduce((s,x)=>s+x.price*x.q,0);
+const containerTotal = containerQty * CONTAINER_PRICE;
+el("#cartTotal").textContent = fmt(foodTotal + containerTotal);
 }
 
 function openCart(){el("#cartModal").style.display="flex";}
 el("#closeCart").onclick=()=>el("#cartModal").style.display="none";
-el("#clear").onclick=()=>{cart=[];updateCart();};
+el("#clear").onclick=()=>{
+  cart=[];
+  containerQty=0;
+  el("#containerQty").textContent=0;
+  updateCart();
+};
+
 el("#send").onclick=()=>{
   if(cart.length===0){alert("Корзина пуста");return;}
   const name=el("#name").value.trim();
@@ -617,7 +640,11 @@ let msg =
   `Заказ:\n`;
 
   cart.forEach((it,i)=>msg+=`${i+1}. ${it.name} x${it.q} = ${it.price*it.q} ₸\n`);
-  msg+=`\nИтого: ${cart.reduce((s,x)=>s+x.price*x.q,0)} ₸`;
+  if (containerQty > 0) {
+  msg += `\nКонтейнеры: ${containerQty} x ${CONTAINER_PRICE} ₸ = ${containerQty * CONTAINER_PRICE} ₸\n`;
+}
+  msg+=`\nИтого: ${foodTotal + containerQty * CONTAINER_PRICE} ₸`;
+
   window.open(`https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
 };
 
@@ -690,11 +717,17 @@ function searchMenu() {
   }
 }
 
+function changeContainer(d) {
+  containerQty += d;
+  if (containerQty < 0) containerQty = 0;
+  el("#containerQty").textContent = containerQty;
+  updateCart();
+}
+
 
 </script>
 </body>
 </html>
-
 
 
 
