@@ -630,6 +630,8 @@ el("#send").onclick=()=>{
   if(!name||!phone){alert("Введите имя и телефон");return;}
   const addr=el("#addr").value.trim();
  const pay = document.querySelector('input[name="pay"]:checked').value;
+  const foodTotal = cart.reduce((s,x)=>s+x.price*x.q,0);
+const containerTotal = containerQty * CONTAINER_PRICE;
 
 let msg =
   `Новый заказ в Кафе Алмаз:\n\n` +
@@ -728,6 +730,7 @@ function changeContainer(d) {
 </script>
 </body>
 </html>
+
 
 
 
