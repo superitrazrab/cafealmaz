@@ -262,6 +262,24 @@ header{
   margin-bottom:28px;
 }
 
+.dev-footer{
+  text-align:center;
+  padding:24px 12px 30px;
+  opacity:.75;
+}
+
+.dev-footer img{
+  max-width:120px;
+  display:block;
+  margin:0 auto 8px;
+}
+
+.dev-footer span{
+  font-size:12px;
+  color:#7a5a5a; /* или var(--muted), если есть */
+}
+
+
 </style>
 
 
@@ -306,17 +324,13 @@ header{
   <div id="menu" class="menu"></div>
 </main>
 
-<footer>
+<footer class="dev-footer">
   <img 
     src="https://i.ibb.co.com/23cNPtDh/image.png"
     alt="SAM Studio"
-    style="
-      max-width:120px;
-      opacity:0.8;
-    "
   >
+  <span>Разработка — SAM Studio</span>
 </footer>
-
 
 <div id="floatCart" onclick="openCart()">
   🛒
